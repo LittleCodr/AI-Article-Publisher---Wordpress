@@ -1,0 +1,2460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI WordPress Publisher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.puter.com/v2/"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#121212',
+                        'dark-surface': '#1e1e1e',
+                        'dark-card': '#2d2d2d',
+                        'dark-border': '#404040',
+                        'primary': '#1976d2',
+                        'primary-hover': '#1565c0',
+                        'success': '#4caf50',
+                        'warning': '#ff9800',
+                        'error': '#f44336'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(30, 30, 30, 0.8);
+        }
+
+        .material-shadow {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .material-shadow-lg {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #2d2d2d;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #404040;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Enhanced Radio Button Styling */
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #404040;
+            border-radius: 50%;
+            background: #1e1e1e;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        input[type="radio"]:checked {
+            border-color: currentColor;
+            background: currentColor;
+        }
+
+        input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: white;
+        }
+
+        input[type="radio"]:hover {
+            border-color: #525252;
+            transform: scale(1.1);
+        }
+
+        input[type="radio"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Enhanced DateTime Picker Styling */
+        input[type="datetime-local"] {
+            color-scheme: dark;
+            background: #2d2d2d !important;
+            border: 1px solid #3b82f6 !important;
+            border-radius: 8px !important;
+            padding: 12px 16px !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            color: #f3f4f6 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        input[type="datetime-local"]:hover {
+            border-color: #60a5fa !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        }
+
+        input[type="datetime-local"]:focus {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+            outline: none !important;
+        }
+
+        /* Calendar Dropdown Styling */
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a3a3a3'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'/%3e%3c/svg%3e") no-repeat center;
+            background-size: 18px 18px;
+            cursor: pointer;
+            height: 20px;
+            width: 20px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        /* For Firefox */
+        input[type="datetime-local"] {
+            position: relative;
+        }
+
+        /* Publishing Option Cards Hover Effects */
+        .publish-option-card {
+            transition: all 0.2s ease;
+            background: linear-gradient(135deg, rgba(45, 45, 45, 0.5), rgba(45, 45, 45, 0.2));
+        }
+
+        .publish-option-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .publish-option-card.selected {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+            border-color: #3b82f6 !important;
+        }
+
+        /* Article Content Styling */
+        .article-content {
+            line-height: 1.7;
+            color: #e5e7eb;
+        }
+
+        .article-content h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 2rem 0 1.5rem 0;
+            line-height: 1.2;
+            border-bottom: 3px solid #1976d2;
+            padding-bottom: 0.5rem;
+        }
+
+        .article-content h2 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 2rem 0 1rem 0;
+            line-height: 1.3;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .article-content h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #1976d2, #42a5f5);
+            border-radius: 2px;
+        }
+
+        .article-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f3f4f6;
+            margin: 1.5rem 0 0.75rem 0;
+            line-height: 1.4;
+        }
+
+        .article-content h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #f3f4f6;
+            margin: 1.25rem 0 0.5rem 0;
+            line-height: 1.4;
+        }
+
+        .article-content h5 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #f3f4f6;
+            margin: 1rem 0 0.5rem 0;
+            line-height: 1.4;
+        }
+
+        .article-content h6 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #f3f4f6;
+            margin: 1rem 0 0.5rem 0;
+            line-height: 1.4;
+        }
+
+        .article-content p {
+            margin: 1rem 0;
+            color: #d1d5db;
+            text-align: justify;
+        }
+
+        .article-content strong,
+        .article-content b {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .article-content em,
+        .article-content i {
+            font-style: italic;
+            color: #f3f4f6;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+        }
+
+        .article-content ul {
+            list-style-type: none;
+        }
+
+        .article-content ul li {
+            position: relative;
+            margin: 0.75rem 0;
+            padding-left: 1.5rem;
+            color: #d1d5db;
+            line-height: 1.6;
+        }
+
+        .article-content ul li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #1976d2;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .article-content ol {
+            list-style-type: decimal;
+            list-style-position: outside;
+        }
+
+        .article-content ol li {
+            margin: 0.75rem 0;
+            color: #d1d5db;
+            line-height: 1.6;
+            padding-left: 0.5rem;
+        }
+
+        .article-content ol li::marker {
+            color: #1976d2;
+            font-weight: 600;
+        }
+
+        .article-content blockquote {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #1e3a8a11, #1976d211);
+            border-left: 4px solid #1976d2;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #f3f4f6;
+            position: relative;
+        }
+
+        .article-content blockquote::before {
+            content: '"';
+            font-size: 4rem;
+            color: #1976d2;
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: Georgia, serif;
+            opacity: 0.3;
+        }
+
+        .article-content blockquote p {
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .article-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .article-content table th {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid #0d47a1;
+        }
+
+        .article-content table td {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid #404040;
+            color: #d1d5db;
+            vertical-align: top;
+        }
+
+        .article-content table tr:nth-child(even) {
+            background: #2a2a2a;
+        }
+
+        .article-content table tr:hover {
+            background: #333333;
+            transition: background-color 0.2s ease;
+        }
+
+        .article-content table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .article-content code {
+            background: #2d2d2d;
+            color: #64b5f6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border: 1px solid #404040;
+        }
+
+        .article-content pre {
+            background: #1a1a1a;
+            color: #e5e7eb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid #404040;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .article-content pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+        }
+
+        .article-content a {
+            color: #64b5f6;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+
+        .article-content a:hover {
+            color: #90caf9;
+        }
+
+        .article-content hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #1976d2, transparent);
+            margin: 2.5rem 0;
+            border-radius: 1px;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .article-content figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .article-content figcaption {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .article-content dl {
+            margin: 1.5rem 0;
+        }
+
+        .article-content dt {
+            font-weight: 600;
+            color: #ffffff;
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .article-content dd {
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #d1d5db;
+        }
+
+        /* Nested list styling */
+        .article-content ul ul,
+        .article-content ol ol,
+        .article-content ul ol,
+        .article-content ol ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        /* Special emphasis styles */
+        .article-content .highlight {
+            background: rgba(25, 118, 210, 0.2);
+            color: #90caf9;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .article-content .callout {
+            background: linear-gradient(135deg, #065f4611, #047857aa);
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .article-content .warning {
+            background: linear-gradient(135deg, #92400e11, #d97706aa);
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .article-content h1 {
+                font-size: 1.875rem;
+            }
+
+            .article-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .article-content h3 {
+                font-size: 1.25rem;
+            }
+
+            .article-content table {
+                font-size: 0.9rem;
+            }
+
+            .article-content table th,
+            .article-content table td {
+                padding: 0.5rem;
+            }
+
+            .article-content ul,
+            .article-content ol {
+                padding-left: 1.5rem;
+            }
+
+            .article-content blockquote {
+                padding: 1rem;
+                margin: 1.5rem 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="dark bg-dark-bg text-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="glass-effect border-b border-dark-border sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-semibold text-white">AI WordPress Publisher</h1>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button id="bulkBtn"
+                        class="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white rounded-lg border border-purple-500 transition-colors">
+                        <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z"></path>
+                            <path
+                                d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2V5h-2v6z">
+                            </path>
+                        </svg>
+                        Bulk Generator
+                    </button>
+                    <button id="projectsBtn"
+                        class="px-4 py-2 bg-dark-card hover:bg-gray-700 rounded-lg border border-dark-border transition-colors">
+                        <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z">
+                            </path>
+                        </svg>
+                        Projects
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+            <!-- Left Panel - Input & Settings -->
+            <div class="xl:col-span-1 space-y-6">
+
+                <!-- Project Selection -->
+                <div class="bg-dark-surface rounded-xl p-6 material-shadow border border-dark-border">
+                    <h2 class="text-lg font-medium text-white mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        WordPress Project
+                    </h2>
+                    <div class="space-y-3">
+                        <select id="projectSelect"
+                            class="w-full bg-dark-card border border-dark-border rounded-lg px-3 py-2 text-gray-100 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                            <option value="">Select a project...</option>
+                        </select>
+                        <button id="addProjectBtn"
+                            class="w-full px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors font-medium">
+                            + Add New Project
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Article Input -->
+                <div class="bg-dark-surface rounded-xl p-6 material-shadow border border-dark-border">
+                    <h2 class="text-lg font-medium text-white mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z">
+                            </path>
+                        </svg>
+                        Article Topic
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="keyword" class="block text-sm font-medium text-gray-300 mb-2">Topic or
+                                Keyword</label>
+                            <input type="text" id="keyword" placeholder="e.g., Best WordPress plugins for SEO"
+                                class="w-full bg-dark-card border border-dark-border rounded-lg px-3 py-2 text-gray-100 placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                        </div>
+                        <button id="generateBtn"
+                            class="w-full px-4 py-3 bg-success hover:bg-green-600 text-white rounded-lg transition-colors font-medium disabled:bg-gray-600 disabled:cursor-not-allowed">
+                            <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Generate Article
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Publishing Options -->
+                <div id="publishingPanel"
+                    class="bg-dark-surface rounded-xl p-6 material-shadow border border-dark-border opacity-50 pointer-events-none">
+                    <h2 class="text-lg font-medium text-white mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z">
+                            </path>
+                        </svg>
+                        Publish to WordPress
+                    </h2>
+                    <div class="space-y-4">
+                        <!-- Connection Test -->
+                        <div class="border border-dark-border rounded-lg p-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-300">Connection Status</span>
+                                <button id="testConnectionBtn"
+                                    class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors">
+                                    <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    Test
+                                </button>
+                            </div>
+                            <div id="connectionStatus" class="text-xs text-gray-500">
+                                Click "Test" to verify WordPress connection
+                            </div>
+                        </div>
+
+                        <!-- Publishing Options -->
+                        <div
+                            class="border border-dark-border rounded-xl p-4 mb-4 bg-gradient-to-br from-dark-surface to-dark-card">
+                            <h3 class="text-sm font-semibold text-gray-200 mb-4 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Publication Options
+                            </h3>
+
+                            <!-- Radio Button Options -->
+                            <div class="space-y-3 mb-4">
+                                <!-- Save Draft Option -->
+                                <label
+                                    class="publish-option-card flex items-start p-3 rounded-lg border border-dark-border hover:border-orange-500/50 transition-colors cursor-pointer group">
+                                    <input type="radio" name="publishOption" value="draft" id="draftOption"
+                                        class="mt-1 w-4 h-4 text-orange-500 bg-dark-bg border-dark-border focus:ring-orange-500 focus:ring-2">
+                                    <div class="ml-3 flex-1">
+                                        <div class="flex items-center">
+                                            <svg class="w-4 h-4 mr-2 text-orange-500" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path
+                                                    d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293z">
+                                                </path>
+                                                <path
+                                                    d="M5 3a2 2 0 00-2 2v1a1 1 0 001 1h1a1 1 0 001-1V5a1 1 0 011-1h6a1 1 0 011 1v1a1 1 0 001 1h1a1 1 0 001-1V5a2 2 0 00-2-2H5z">
+                                                </path>
+                                            </svg>
+                                            <span class="font-medium text-gray-200 group-hover:text-orange-400">Save as
+                                                Draft</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Save the article for review and editing
+                                            later</p>
+                                    </div>
+                                </label>
+
+                                <!-- Publish Now Option -->
+                                <label
+                                    class="publish-option-card selected flex items-start p-3 rounded-lg border border-dark-border hover:border-green-500/50 transition-colors cursor-pointer group">
+                                    <input type="radio" name="publishOption" value="publish" id="publishOption"
+                                        class="mt-1 w-4 h-4 text-green-500 bg-dark-bg border-dark-border focus:ring-green-500 focus:ring-2"
+                                        checked>
+                                    <div class="ml-3 flex-1">
+                                        <div class="flex items-center">
+                                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                    clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-medium text-gray-200 group-hover:text-green-400">Publish
+                                                Now</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Make the article live immediately</p>
+                                    </div>
+                                </label>
+
+                                <!-- Schedule Option -->
+                                <label
+                                    class="publish-option-card flex items-start p-3 rounded-lg border border-dark-border hover:border-blue-500/50 transition-colors cursor-pointer group">
+                                    <input type="radio" name="publishOption" value="schedule" id="scheduleOption"
+                                        class="mt-1 w-4 h-4 text-blue-500 bg-dark-bg border-dark-border focus:ring-blue-500 focus:ring-2">
+                                    <div class="ml-3 flex-1">
+                                        <div class="flex items-center">
+                                            <svg class="w-4 h-4 mr-2 text-blue-500" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                                    clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-medium text-gray-200 group-hover:text-blue-400">Schedule
+                                                for Later</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Choose a specific date and time for
+                                            publication</p>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Schedule Date/Time Picker -->
+                            <div id="scheduleDateTime"
+                                class="hidden mt-4 p-4 bg-dark-bg/50 rounded-lg border border-blue-500/30">
+                                <label class="block text-sm font-medium text-blue-300 mb-3 flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    Publication Date & Time
+                                </label>
+                                <div class="relative">
+                                    <input type="datetime-local" id="scheduleInput"
+                                        class="w-full bg-dark-surface border border-blue-500/50 rounded-lg px-4 py-3 text-gray-100 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 outline-none text-sm font-medium transition-all">
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="mt-2 flex items-center text-xs text-blue-300/70">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    Select a future date and time for automatic publication
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <button id="publishBtn"
+                            class="w-full px-4 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" id="publishIcon">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            <span id="publishBtnText">Publish Now</span>
+                        </button>
+                        <div id="publishStatus" class="hidden p-3 rounded-lg"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Preview -->
+            <div class="xl:col-span-2">
+                <div class="bg-dark-surface rounded-xl p-6 material-shadow border border-dark-border">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-medium text-white flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm12 2L8 10 4 6h12z">
+                                </path>
+                            </svg>
+                            Article Preview
+                        </h2>
+                        <div id="wordCount" class="text-sm text-gray-400 bg-dark-card px-3 py-1 rounded-full">
+                            0 words
+                        </div>
+                    </div>
+
+                    <div id="articlePreview" class="min-h-96 max-h-screen overflow-y-auto custom-scrollbar">
+                        <div class="text-center py-16 text-gray-500">
+                            <svg class="w-16 h-16 mx-auto mb-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v12h8V6H8a2 2 0 01-2-2z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            <p class="text-lg">Generate an article to see the preview</p>
+                            <p class="text-sm mt-2">Enter a topic above and click "Generate Article"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bulk Generation Page -->
+    <div id="bulkPage" class="hidden">
+        <header class="glass-effect border-b border-dark-border sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z"></path>
+                                <path
+                                    d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2V5h-2v6z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h1 class="text-xl font-semibold text-white">Bulk Article Generator</h1>
+                    </div>
+                    <button id="backToMainBtn"
+                        class="px-4 py-2 bg-dark-card hover:bg-gray-700 rounded-lg border border-dark-border transition-colors">
+                        <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        Back to Main
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+
+                <!-- Left Panel - CSV Import & Settings -->
+                <div class="space-y-6">
+
+                    <!-- Project Selection -->
+                    <div class="bg-dark-surface rounded-xl p-6 material-shadow border border-dark-border">
+                        <h2 class="text-lg font-medium text-white mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            WordPress Project
+                        </h2>
+                        <select id="bulkProjectSelect"
+                            class="w-full bg-dark-bg border border-dark-border rounded-lg px-3 py-2 text-gray-100 focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+                            <option value="">Select a WordPress project...</option>
+                        </select>
+                    </div>
+
+                    <!-- CSV Import -->
+                    <div class="bg-dark-surface rounded-xl p-6 material-shadow border border-dark-border">
+                        <h2 class="text-lg font-medium text-white mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 4.414V13a1 1 0 11-2 0V4.414L7.707 6.707a1 1 0 01-1.414 0z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            CSV Import
+                        </h2>
+
+                        <!-- CSV Format Info -->
+                        <div class="mb-4 p-3 bg-purple-900/30 border border-purple-500/50 rounded-lg">
+                            <h4 class="text-sm font-medium text-purple-300 mb-2">Required CSV Format:</h4>
+                            <div class="text-xs text-gray-400 font-mono bg-dark-bg p-2 rounded">
+                                Title,Schedule Time,Action<br>
+                                "Best AI Tools 2024","2024-01-15 14:30","publish"<br>
+                                "WordPress Tutorial","2024-01-16 09:00","schedule"<br>
+                                "SEO Guide","","draft"
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">
+                                • <strong>Title</strong>: Article topic/keyword<br>
+                                • <strong>Schedule Time</strong>: YYYY-MM-DD HH:MM (optional)<br>
+                                • <strong>Action</strong>: publish, draft, or schedule
+                            </p>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="mb-4">
+                            <input type="file" id="csvFileInput" accept=".csv" class="hidden">
+                            <button id="uploadCsvBtn"
+                                class="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white rounded-lg transition-all duration-200 font-medium border border-purple-500">
+                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 4.414V13a1 1 0 11-2 0V4.414L7.707 6.707a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                Upload CSV File
+                            </button>
+                        </div>
+
+                        <!-- Manual Entry -->
+                        <div class="border-t border-dark-border pt-4">
+                            <h4 class="text-sm font-medium text-gray-300 mb-3">Or Add Manually:</h4>
+                            <div class="grid grid-cols-1 gap-3">
+                                <input type="text" id="manualTitle" placeholder="Article Title/Topic"
+                                    class="w-full bg-dark-bg border border-dark-border rounded-lg px-3 py-2 text-gray-100 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none">
+                                <input type="datetime-local" id="manualSchedule"
+                                    class="w-full bg-dark-bg border border-dark-border rounded-lg px-3 py-2 text-gray-100 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none">
+                                <select id="manualAction"
+                                    class="w-full bg-dark-bg border border-dark-border rounded-lg px-3 py-2 text-gray-100 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none">
+                                    <option value="publish">Publish Now</option>
+                                    <option value="draft">Save as Draft</option>
+                                    <option value="schedule">Schedule</option>
+                                </select>
+                                <button id="addManualBtn"
+                                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                                    <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    Add to Queue
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bulk Actions -->
+                    <div class="bg-dark-surface rounded-xl p-6 material-shadow border border-dark-border">
+                        <h2 class="text-lg font-medium text-white mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Bulk Actions
+                        </h2>
+
+                        <div class="space-y-3">
+                            <button id="startBulkBtn"
+                                class="w-full px-4 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed">
+                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                Start Bulk Generation
+                            </button>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <button id="pauseBulkBtn"
+                                    class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    disabled>
+                                    <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    Pause
+                                </button>
+                                <button id="clearQueueBtn"
+                                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                                    <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel - Queue & Progress -->
+                <div class="space-y-6">
+
+                    <!-- Progress Overview -->
+                    <div class="bg-dark-surface rounded-xl p-6 material-shadow border border-dark-border">
+                        <h2 class="text-lg font-medium text-white mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Progress Overview
+                        </h2>
+
+                        <div class="grid grid-cols-3 gap-4 mb-4">
+                            <div class="text-center p-3 bg-dark-bg rounded-lg border border-dark-border">
+                                <div class="text-2xl font-bold text-purple-400" id="totalCount">0</div>
+                                <div class="text-xs text-gray-500">Total</div>
+                            </div>
+                            <div class="text-center p-3 bg-dark-bg rounded-lg border border-green-500/30">
+                                <div class="text-2xl font-bold text-green-400" id="completedCount">0</div>
+                                <div class="text-xs text-gray-500">Completed</div>
+                            </div>
+                            <div class="text-center p-3 bg-dark-bg rounded-lg border border-red-500/30">
+                                <div class="text-2xl font-bold text-red-400" id="failedCount">0</div>
+                                <div class="text-xs text-gray-500">Failed</div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-400 mb-1">
+                                <span>Overall Progress</span>
+                                <span id="progressPercent">0%</span>
+                            </div>
+                            <div class="w-full bg-dark-bg rounded-full h-3 border border-dark-border">
+                                <div id="progressBar"
+                                    class="bg-gradient-to-r from-purple-600 to-purple-500 h-3 rounded-full transition-all duration-500"
+                                    style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Current Status -->
+                        <div id="currentStatus"
+                            class="text-sm text-gray-400 p-3 bg-dark-bg rounded-lg border border-dark-border">
+                            Ready to start bulk generation...
+                        </div>
+                    </div>
+
+                    <!-- Article Queue -->
+                    <div class="bg-dark-surface rounded-xl p-6 material-shadow border border-dark-border">
+                        <h2 class="text-lg font-medium text-white mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Article Queue
+                            <span id="queueCount"
+                                class="ml-2 px-2 py-1 bg-purple-600 text-white text-xs rounded-full">0</span>
+                        </h2>
+
+                        <div id="articleQueue" class="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
+                            <div class="text-center py-8 text-gray-500">
+                                <svg class="w-12 h-12 mx-auto mb-3 text-gray-600" fill="currentColor"
+                                    viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <p>No articles in queue</p>
+                                <p class="text-sm">Upload a CSV file or add articles manually</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Project Management Modal -->
+    <div id="projectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-dark-surface rounded-xl p-6 w-full max-w-2xl material-shadow-lg border border-dark-border">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold text-white">Manage WordPress Projects</h3>
+                <button id="closeProjectModal" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Add New Project Form -->
+            <div class="mb-6 p-4 bg-dark-card rounded-lg border border-dark-border">
+                <h4 class="text-lg font-medium text-white mb-4">Add New Project</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Project Name</label>
+                        <input type="text" id="projectName"
+                            class="w-full bg-dark-bg border border-dark-border rounded-lg px-3 py-2 text-gray-100 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                            placeholder="My WordPress Site">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Site URL</label>
+                        <input type="url" id="projectUrl"
+                            class="w-full bg-dark-bg border border-dark-border rounded-lg px-3 py-2 text-gray-100 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                            placeholder="https://example.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Username</label>
+                        <input type="text" id="projectUsername"
+                            class="w-full bg-dark-bg border border-dark-border rounded-lg px-3 py-2 text-gray-100 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                            placeholder="admin">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Application Password</label>
+                        <input type="password" id="projectPassword"
+                            class="w-full bg-dark-bg border border-dark-border rounded-lg px-3 py-2 text-gray-100 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                            placeholder="xxxx xxxx xxxx xxxx">
+                    </div>
+                </div>
+                <button id="addProjectSave"
+                    class="mt-4 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors">
+                    Save Project
+                </button>
+            </div>
+
+            <!-- File Operations -->
+            <div class="mb-6 p-4 bg-dark-card rounded-lg border border-dark-border">
+                <h4 class="text-lg font-medium text-white mb-4">Import/Export Projects</h4>
+                <div class="flex gap-3">
+                    <button id="loadProjectsBtn"
+                        class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                        <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        Load projects.json
+                    </button>
+                    <button id="exportProjectsBtn"
+                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                        <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        Export projects.json
+                    </button>
+                </div>
+                <input type="file" id="fileInput" accept=".json" style="display: none;">
+            </div>
+
+            <!-- Existing Projects List -->
+            <div>
+                <h4 class="text-lg font-medium text-white mb-4">Existing Projects</h4>
+                <div id="projectsList" class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar">
+                    <!-- Projects will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let currentArticle = null;
+        let projects = [];
+
+        // Bulk generation state
+        let bulkQueue = [];
+        let bulkProcessing = false;
+        let bulkPaused = false;
+        let bulkStats = {
+            total: 0,
+            completed: 0,
+            failed: 0,
+            current: null
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            loadProjects();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Generate article
+            document.getElementById('generateBtn').addEventListener('click', generateArticle);
+            document.getElementById('keyword').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') generateArticle();
+            });
+
+            // Project management
+            document.getElementById('projectsBtn').addEventListener('click', () => {
+                document.getElementById('projectModal').classList.remove('hidden');
+                document.getElementById('projectModal').classList.add('flex');
+            });
+
+            document.getElementById('closeProjectModal').addEventListener('click', () => {
+                document.getElementById('projectModal').classList.add('hidden');
+                document.getElementById('projectModal').classList.remove('flex');
+            });
+
+            document.getElementById('addProjectBtn').addEventListener('click', () => {
+                document.getElementById('projectModal').classList.remove('hidden');
+                document.getElementById('projectModal').classList.add('flex');
+            });
+
+            document.getElementById('addProjectSave').addEventListener('click', saveProject);
+
+            // Publishing - Single button handles all options
+            document.getElementById('publishBtn').addEventListener('click', () => {
+                const selectedOption = document.querySelector('input[name="publishOption"]:checked').value;
+                publishToWordPress(selectedOption === 'schedule' ? 'future' : selectedOption);
+            });
+
+            // Radio button change handlers
+            document.querySelectorAll('input[name="publishOption"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                    updatePublishInterface(this.value);
+                    updateRadioCardSelection();
+                });
+            });
+
+            // Connection testing
+            document.getElementById('testConnectionBtn').addEventListener('click', testWordPressConnection);
+
+            // File operations
+            document.getElementById('loadProjectsBtn').addEventListener('click', loadProjectsFile);
+            document.getElementById('exportProjectsBtn').addEventListener('click', exportProjects);
+            document.getElementById('fileInput').addEventListener('change', handleFileLoad);
+
+            // Project selection
+            document.getElementById('projectSelect').addEventListener('change', function () {
+                const panel = document.getElementById('publishingPanel');
+                const statusDiv = document.getElementById('connectionStatus');
+
+                if (this.value) {
+                    panel.classList.remove('opacity-50', 'pointer-events-none');
+                    // Reset connection status when project changes
+                    statusDiv.className = 'text-xs text-gray-500';
+                    statusDiv.textContent = 'Click "Test" to verify WordPress connection';
+                } else {
+                    panel.classList.add('opacity-50', 'pointer-events-none');
+                    statusDiv.className = 'text-xs text-gray-500';
+                    statusDiv.textContent = 'Select a project to test connection';
+                }
+            });
+
+            // Bulk Generation Event Listeners
+            document.getElementById('bulkBtn').addEventListener('click', showBulkPage);
+            document.getElementById('backToMainBtn').addEventListener('click', showMainPage);
+
+            // CSV Upload
+            document.getElementById('uploadCsvBtn').addEventListener('click', () => {
+                document.getElementById('csvFileInput').click();
+            });
+            document.getElementById('csvFileInput').addEventListener('change', handleCsvUpload);
+
+            // Manual Entry
+            document.getElementById('addManualBtn').addEventListener('click', addManualEntry);
+
+            // Bulk Actions
+            document.getElementById('startBulkBtn').addEventListener('click', startBulkGeneration);
+            document.getElementById('pauseBulkBtn').addEventListener('click', pauseBulkGeneration);
+            document.getElementById('clearQueueBtn').addEventListener('click', clearBulkQueue);
+        }
+
+        function updatePublishInterface(selectedOption) {
+            const scheduleDateTime = document.getElementById('scheduleDateTime');
+            const publishBtnText = document.getElementById('publishBtnText');
+            const publishIcon = document.getElementById('publishIcon');
+            const publishBtn = document.getElementById('publishBtn');
+            const scheduleInput = document.getElementById('scheduleInput');
+
+            // Update button appearance and text based on selected option
+            switch (selectedOption) {
+                case 'draft':
+                    scheduleDateTime.classList.add('hidden');
+                    publishBtnText.textContent = 'Save as Draft';
+                    publishBtn.className = 'w-full px-4 py-3 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center';
+                    publishIcon.innerHTML = '<path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293z"></path><path d="M5 3a2 2 0 00-2 2v1a1 1 0 001 1h1a1 1 0 001-1V5a1 1 0 011-1h6a1 1 0 011 1v1a1 1 0 001 1h1a1 1 0 001-1V5a2 2 0 00-2-2H5z"></path>';
+                    break;
+                case 'publish':
+                    scheduleDateTime.classList.add('hidden');
+                    publishBtnText.textContent = 'Publish Now';
+                    publishBtn.className = 'w-full px-4 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center';
+                    publishIcon.innerHTML = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>';
+                    break;
+                case 'schedule':
+                    scheduleDateTime.classList.remove('hidden');
+                    publishBtnText.textContent = 'Schedule Post';
+                    publishBtn.className = 'w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center';
+                    publishIcon.innerHTML = '<path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>';
+                    // Set minimum date to current date/time
+                    const now = new Date();
+                    const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+                    scheduleInput.min = localDateTime;
+                    break;
+            }
+        }
+
+        function updateRadioCardSelection() {
+            // Remove selected class from all cards
+            document.querySelectorAll('label[class*="publish-option-card"]').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Add selected class to the parent label of the checked radio
+            const checkedRadio = document.querySelector('input[name="publishOption"]:checked');
+            if (checkedRadio) {
+                checkedRadio.closest('label').classList.add('selected', 'publish-option-card');
+            }
+        }
+
+        async function generateArticle() {
+            const keywordInput = document.getElementById('keyword');
+            const keyword = keywordInput.value.trim();
+            const previewDiv = document.getElementById('articlePreview');
+            const generateBtn = document.getElementById('generateBtn');
+
+            if (!keyword) {
+                showNotification('Please enter a keyword or topic first.', 'error');
+                return;
+            }
+
+            // Show loading state
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = `
+                <svg class="w-5 h-5 inline mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Generating...
+            `;
+
+            previewDiv.innerHTML = `
+                <div class="text-center py-16">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p class="text-lg text-gray-300">Generating SEO article...</p>
+                    <p class="text-sm text-gray-500 mt-2">This may take a few moments</p>
+                </div>
+            `;
+            const prompt = `You are an expert SEO writer. Output ONLY a valid JSON object with no extra text, explanations, or comments. Write like a human. Keep it professional but conversational. Don't use em dashes or buzzwords. Avoid sounding like a press release. Be Clear Direct and natural, like you're writing to a smart friend.
+
+CRITICAL JSON FORMATTING RULES:
+- Return ONLY valid JSON - no markdown code blocks, no extra text before or after
+- ALL string values must be properly escaped for JSON
+- Use proper JSON formatting for the content field.
+- Use Proper escape characters for the content field so that no Error is thrown.
+ 
+
+CONTENT GUIDELINES [Please follow these guidelines strictly Buddy :)]:
+- The Year is 2025. Use the latest data and information. 
+- Data should be 100% accurate, correct and should be in the same language as the keyword, verified from trusted sources only. No Rumoured or Unverified data.
+- Write a comprehensive article with AT LEAST 1500-2000 words total
+- Title should be greater than 80 characters.
+- If the keyword is a listicle without number of points, then write a listicle article with AT LEAST 10 points. Each point having a subheading and a paragraph atleast 100 words cumpulsory.
+- Use an engaging and easy-to-read style, similar to English News Websites like NDTV or India Today. 
+- Do not use overly professional or academic language. 
+- The Content should follow E.E.A.T. principles.
+- Dont follow YMYL (Your Money Your Life) guidelines.
+- Make sure the tone is accessible to general readers while keeping it informative. 
+- Maintain such a flow so it does feel boring or generic informational pass -on
+- Title must be clickbait to catch Attention of readers.
+- Do not use any emojis in the content unless it is a part of the keyword or neccessary.
+- Do not use any images in the content.
+- Do not use any videos in the content.
+- Do not use any audio in the content.
+- Do not use any links in the content unless necessary.
+
+Return exactly this structure:
+
+{
+  "title": "Your SEO-optimized title here",
+  "fKeyword": "Your Focus keyword article here",
+  "meta_description": "Your meta description here",
+  "content": "Your HTML content here"
+}
+
+Strict rules:
+- Each paragraph should be 100-150 words maximum (not the entire article)
+- Never use H1 in content field
+- Never start content field with a heading
+- Add a compelling hook paragraph in the start of the content field
+- Create at least 5-7 main sections with <h2> headings
+- Diversely use different components like headings, paragraphs, lists, tables, blockquotes, etc
+- The content field must be valid HTML, using only tags like <p>, <h2>, <h3>, <ul>, <ol>, <li>, <b>, <i>, <strong>, <em>, <table>, <tr>, <td>, <th>, <blockquote>, etc. for formatting
+- Do NOT include <html>, <head>, <body>, or any other outer HTML structure—only the inner content HTML
+- Do not include any links in the content
+- Write the article in the language of the keyword
+- Write human-like, engaging, and informative content
+- Include specific details, features, comparisons, and examples
+- Add a comprehensive Conclusion section at the end with <h2>Conclusion</h2> followed by a concluding paragraph
+- Return ONLY valid JSON, no markdown code blocks, no extra text
+
+Write a high-quality, SEO-optimized article about: ${keyword}`;
+
+            try {
+                const response = await puter.ai.chat(prompt, { model: "gpt-4.1" },{stream: true}
+                );
+
+                let content = '';
+                if (response && response.message && response.message.content) {
+                    content = response.message.content;
+                } else if (response && typeof response === 'string') {
+                    content = response;
+                } else if (response && response.text) {
+                    content = response.text;
+                } else if (response && response.content) {
+                    content = response.content;
+                } else if (response && response.message) {
+                    content = response.message;
+                } else {
+                    throw new Error('Could not find content in response');
+                }
+
+                try {
+                    const jsonData = JSON.parse(content);
+                    if (jsonData.title && jsonData.meta_description && jsonData.content) {
+                        currentArticle = jsonData;
+                        displayArticle(jsonData);
+                        updateWordCount(jsonData.content);
+                        showNotification('Article generated successfully!', 'success');
+                    } else {
+                        throw new Error('JSON parsed but missing required fields');
+                    }
+                } catch (parseError) {
+                    throw new Error('Failed to parse JSON response');
+                }
+            } catch (error) {
+                console.error('Error generating article:', error);
+                previewDiv.innerHTML = `
+                    <div class="text-center py-16 text-red-400">
+                        <svg class="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <p class="text-lg">Failed to generate article</p>
+                        <p class="text-sm mt-2">${error.message}</p>
+                    </div>
+                `;
+                showNotification('Failed to generate article. Please try again.', 'error');
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = `
+                    <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                    </svg>
+                    Generate Article
+                `;
+            }
+        }
+
+        function displayArticle(article) {
+            const previewDiv = document.getElementById('articlePreview');
+            previewDiv.innerHTML = `
+                <div class="prose prose-invert max-w-none">
+                    <div class="mb-6 p-4 bg-dark-card rounded-lg border border-dark-border">
+                        <h1 class="text-2xl font-bold text-white mb-2">${article.title}</h1>
+                        <p class="text-sm text-gray-400 mb-2"><strong>Focus Keyword:</strong> ${article.fKeyword}</p>
+                        <p class="text-sm text-gray-400"><strong>Meta Description:</strong> ${article.meta_description}</p>
+                    </div>
+                    <div class="article-content text-gray-100">
+                        ${article.content}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateWordCount(content) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            const wordCount = tempDiv.textContent.split(/\s+/).filter(word => word.length > 0).length;
+            document.getElementById('wordCount').textContent = `${wordCount} words`;
+        }
+
+        // File operations for projects.json
+        async function loadProjectsFromFile() {
+            try {
+                const response = await fetch('./projects.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    return Array.isArray(data) ? data : [];
+                } else {
+                    console.warn('projects.json not found, starting with empty projects');
+                    return [];
+                }
+            } catch (error) {
+                console.error('Error loading projects.json:', error);
+                showNotification('Failed to load projects. Starting fresh.', 'warning');
+                return [];
+            }
+        }
+
+        async function saveProjectsToFile(projectsData) {
+            try {
+                // For client-side applications, we need to use the File System Access API
+                // or provide instructions for manual file saving
+                if ('showSaveFilePicker' in window) {
+                    // Use File System Access API if available (Chrome/Edge)
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName: 'projects.json',
+                        types: [{
+                            description: 'JSON files',
+                            accept: { 'application/json': ['.json'] }
+                        }]
+                    });
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(JSON.stringify(projectsData, null, 2));
+                    await writable.close();
+                    showNotification('Projects saved successfully!', 'success');
+                } else {
+                    // Fallback: Download the file
+                    downloadProjectsFile(projectsData);
+                    showNotification('Projects file downloaded. Please replace your projects.json file.', 'warning');
+                }
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    console.error('Error saving projects:', error);
+                    showNotification('Failed to save projects. Using browser download instead.', 'warning');
+                    downloadProjectsFile(projectsData);
+                }
+            }
+        }
+
+        function downloadProjectsFile(projectsData) {
+            const dataStr = JSON.stringify(projectsData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'projects.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // File operations for import/export
+        function loadProjectsFile() {
+            document.getElementById('fileInput').click();
+        }
+
+        function exportProjects() {
+            downloadProjectsFile(projects);
+            showNotification('Projects exported successfully!', 'success');
+        }
+
+        async function handleFileLoad(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const loadedProjects = JSON.parse(text);
+
+                if (!Array.isArray(loadedProjects)) {
+                    throw new Error('Invalid file format: expected an array of projects');
+                }
+
+                // Validate project structure
+                for (const project of loadedProjects) {
+                    if (!project.name || !project.url || !project.username || !project.password) {
+                        throw new Error('Invalid project format: missing required fields');
+                    }
+                }
+
+                projects = loadedProjects;
+                loadProjects();
+                showNotification(`Loaded ${projects.length} projects successfully!`, 'success');
+
+                // Clear the file input
+                event.target.value = '';
+
+            } catch (error) {
+                console.error('Error loading projects file:', error);
+                showNotification(`Failed to load projects: ${error.message}`, 'error');
+                event.target.value = '';
+            }
+        }
+
+        async function loadProjects() {
+            try {
+                // Load projects from file
+                projects = await loadProjectsFromFile();
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                showNotification('Failed to load projects from file', 'error');
+                projects = [];
+            }
+
+            const select = document.getElementById('projectSelect');
+            const list = document.getElementById('projectsList');
+
+            // Clear existing options except first
+            select.innerHTML = '<option value="">Select a project...</option>';
+
+            // Add projects to select
+            projects.forEach((project, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = project.name;
+                select.appendChild(option);
+            });
+
+            // Display projects in modal
+            list.innerHTML = '';
+            if (projects.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 text-center py-4">No projects added yet</p>';
+            } else {
+                projects.forEach((project, index) => {
+                    const projectDiv = document.createElement('div');
+                    projectDiv.className = 'flex items-center justify-between p-3 bg-dark-card rounded-lg border border-dark-border';
+                    projectDiv.innerHTML = `
+                        <div>
+                            <h5 class="font-medium text-white">${project.name}</h5>
+                            <p class="text-sm text-gray-400">${project.url}</p>
+                        </div>
+                        <button onclick="deleteProject(${index})" class="text-red-400 hover:text-red-300 transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path>
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414L8.586 12l-3.293 3.293a1 1 0 101.414 1.414L10 13.414l3.293 3.293a1 1 0 001.414-1.414L11.414 12l3.293-3.293z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                    `;
+                    list.appendChild(projectDiv);
+                });
+            }
+        }
+
+        async function saveProject() {
+            const name = document.getElementById('projectName').value.trim();
+            const url = document.getElementById('projectUrl').value.trim();
+            const username = document.getElementById('projectUsername').value.trim();
+            const password = document.getElementById('projectPassword').value.trim();
+
+            if (!name || !url || !username || !password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            const project = { name, url, username, password };
+            projects.push(project);
+
+            try {
+                await saveProjectsToFile(projects);
+
+                // Clear form
+                document.getElementById('projectName').value = '';
+                document.getElementById('projectUrl').value = '';
+                document.getElementById('projectUsername').value = '';
+                document.getElementById('projectPassword').value = '';
+
+                loadProjects();
+                showNotification('Project added successfully!', 'success');
+            } catch (error) {
+                // Remove the project we just added since save failed
+                projects.pop();
+                console.error('Error saving project:', error);
+                showNotification('Failed to save project to file', 'error');
+            }
+        }
+
+        async function deleteProject(index) {
+            if (confirm('Are you sure you want to delete this project?')) {
+                const deletedProject = projects[index];
+                projects.splice(index, 1);
+
+                try {
+                    await saveProjectsToFile(projects);
+                    loadProjects();
+                    showNotification('Project deleted successfully!', 'success');
+                } catch (error) {
+                    // Restore the deleted project since save failed
+                    projects.splice(index, 0, deletedProject);
+                    console.error('Error deleting project:', error);
+                    showNotification('Failed to save changes to file', 'error');
+                }
+            }
+        }
+
+        async function testWordPressConnection() {
+            const selectedProjectIndex = document.getElementById('projectSelect').value;
+            if (!selectedProjectIndex) {
+                showNotification('Please select a WordPress project first', 'error');
+                return;
+            }
+
+            const project = projects[selectedProjectIndex];
+            const statusDiv = document.getElementById('connectionStatus');
+            const testBtn = document.getElementById('testConnectionBtn');
+
+            // Show loading state
+            testBtn.disabled = true;
+            testBtn.innerHTML = `
+                <svg class="w-3 h-3 inline mr-1 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Testing...
+            `;
+            statusDiv.className = 'text-xs text-blue-400';
+            statusDiv.textContent = 'Testing WordPress connection...';
+
+            try {
+                // Ensure URL ends properly
+                const baseUrl = project.url.endsWith('/') ? project.url.slice(0, -1) : project.url;
+
+                // Step 1: Test if REST API is accessible
+                console.log(`Testing REST API access: ${baseUrl}/wp-json/wp/v2/`);
+                const apiTestResponse = await fetch(`${baseUrl}/wp-json/wp/v2/`);
+
+                if (!apiTestResponse.ok) {
+                    throw new Error(`REST API not accessible (${apiTestResponse.status}). Check if WordPress REST API is enabled.`);
+                }
+
+                // Step 2: Test authentication with user credentials
+                const auth = btoa(`${project.username}:${project.password}`);
+                console.log(`Testing authentication for user: ${project.username}`);
+
+                // Try multiple endpoints for better compatibility
+                const endpoints = [
+                    `${baseUrl}/wp-json/wp/v2/users/me`,
+                    `${baseUrl}/wp-json/wp/v2/users?context=edit`
+                ];
+
+                let lastError = null;
+                let userData = null;
+
+                for (const endpoint of endpoints) {
+                    try {
+                        console.log(`Trying endpoint: ${endpoint}`);
+                        const response = await fetch(endpoint, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Basic ${auth}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+
+                            // Handle different response formats
+                            if (endpoint.includes('/users/me')) {
+                                userData = data;
+                            } else if (endpoint.includes('/users?') && Array.isArray(data) && data.length > 0) {
+                                userData = data.find(user => user.username === project.username) || data[0];
+                            }
+                            break;
+                        } else {
+                            const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                            lastError = new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+                        }
+                    } catch (err) {
+                        lastError = err;
+                        continue;
+                    }
+                }
+
+                if (!userData) {
+                    throw lastError || new Error('All authentication attempts failed');
+                }
+
+                // Step 3: Test publishing permissions
+                console.log('Testing publishing permissions...');
+                let permissionStatus = '';
+                let hasPublishPermission = false;
+
+                try {
+                    const permissionResponse = await fetch(`${baseUrl}/wp-json/wp/v2/posts?per_page=1&context=edit`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Basic ${auth}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (permissionResponse.ok) {
+                        hasPublishPermission = true;
+                        permissionStatus = ' ✅ Publishing enabled';
+                    } else {
+                        const permError = await permissionResponse.json().catch(() => ({ message: permissionResponse.statusText }));
+                        if (permError.message.includes('not allowed to edit posts')) {
+                            permissionStatus = ' ⚠️ Limited permissions (read-only)';
+                        } else {
+                            permissionStatus = ' ❓ Publishing permissions unknown';
+                        }
+                    }
+                } catch (permErr) {
+                    permissionStatus = ' ❓ Could not check publishing permissions';
+                }
+
+                // Show success with safe property access
+                const userName = userData.name || userData.username || project.username;
+                const userRoles = userData.roles && Array.isArray(userData.roles)
+                    ? userData.roles.join(', ')
+                    : userData.capabilities
+                        ? Object.keys(userData.capabilities).filter(cap => userData.capabilities[cap]).slice(0, 3).join(', ')
+                        : 'User';
+
+                const statusClass = hasPublishPermission ? 'text-xs text-green-400' : 'text-xs text-yellow-400';
+                statusDiv.className = statusClass;
+                statusDiv.innerHTML = `
+                    <div class="flex flex-col">
+                        <div class="flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Connected as ${userName}${userRoles ? ` (${userRoles})` : ''}
+                        </div>
+                        <div class="text-xs mt-1">${permissionStatus}</div>
+                    </div>
+                `;
+
+                const notificationType = hasPublishPermission ? 'success' : 'warning';
+                const notificationMessage = hasPublishPermission
+                    ? 'WordPress connection successful!'
+                    : 'Connected but with limited permissions. You may not be able to publish articles.';
+                showNotification(notificationMessage, notificationType);
+
+            } catch (error) {
+                console.error('WordPress Connection Test Error:', error);
+
+                // Provide more specific error messages and solutions
+                let errorMessage = error.message;
+                let solution = '';
+
+                if (errorMessage.includes('You are not currently logged in')) {
+                    solution = 'Check your Application Password and username. Make sure Application Passwords are enabled in WordPress.';
+                } else if (errorMessage.includes('not allowed to edit posts')) {
+                    solution = 'User role lacks publishing permissions. Contact admin to upgrade to Editor/Author role or grant "edit_posts" capability.';
+                } else if (errorMessage.includes('REST API not accessible')) {
+                    solution = 'The WordPress REST API seems to be disabled or blocked.';
+                } else if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
+                    solution = 'Check the site URL and ensure it\'s accessible.';
+                } else if (errorMessage.includes('CORS')) {
+                    solution = 'CORS policy is blocking the request. This may require server configuration.';
+                }
+
+                statusDiv.className = 'text-xs text-red-400';
+                statusDiv.innerHTML = `
+                    <div class="flex flex-col">
+                        <div class="flex items-center mb-1">
+                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            Connection failed: ${errorMessage}
+                        </div>
+                        ${solution ? `<div class="text-yellow-400 text-xs">💡 ${solution}</div>` : ''}
+                    </div>
+                `;
+
+                const fullMessage = solution ? `${errorMessage}\n\n💡 ${solution}` : errorMessage;
+                showNotification(`WordPress connection failed: ${fullMessage}`, 'error');
+            } finally {
+                testBtn.disabled = false;
+                testBtn.innerHTML = `
+                    <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
+                    </svg>
+                    Test
+                `;
+            }
+        }
+
+        async function publishToWordPress(status) {
+            if (!currentArticle) {
+                showNotification('Please generate an article first', 'error');
+                return;
+            }
+
+            const selectedProjectIndex = document.getElementById('projectSelect').value;
+            if (!selectedProjectIndex) {
+                showNotification('Please select a WordPress project', 'error');
+                return;
+            }
+
+            // Validate scheduling if status is 'future'
+            let scheduledDate = null;
+            if (status === 'future') {
+                const scheduleDateTime = document.getElementById('scheduleInput').value;
+                if (!scheduleDateTime) {
+                    showNotification('Please select a date and time for scheduling', 'error');
+                    return;
+                }
+
+                scheduledDate = new Date(scheduleDateTime);
+                const now = new Date();
+
+                if (scheduledDate <= now) {
+                    showNotification('Scheduled date must be in the future', 'error');
+                    return;
+                }
+            }
+
+            const project = projects[selectedProjectIndex];
+            const statusDiv = document.getElementById('publishStatus');
+
+            // Show loading
+            statusDiv.className = 'p-3 rounded-lg bg-blue-900/50 border border-blue-500 text-blue-200';
+            let loadingText = 'Publishing article...';
+            if (status === 'draft') {
+                loadingText = 'Saving as draft...';
+            } else if (status === 'future') {
+                loadingText = 'Scheduling article...';
+            }
+            statusDiv.textContent = loadingText;
+            statusDiv.classList.remove('hidden');
+
+            try {
+                // Prepare the post data
+                const postData = {
+                    title: currentArticle.title,
+                    content: currentArticle.content,
+                    excerpt: currentArticle.meta_description,
+                    status: status,
+                    meta: {}
+                };
+
+                // Add scheduled date if status is 'future'
+                if (status === 'future' && scheduledDate) {
+                    postData.date = scheduledDate.toISOString();
+                }
+
+                // Create authorization header
+                const auth = btoa(`${project.username}:${project.password}`);
+
+                // Make API request
+                const response = await fetch(`${project.url}/wp-json/wp/v2/posts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Basic ${auth}`
+                    },
+                    body: JSON.stringify(postData)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                // Show success
+                statusDiv.className = 'p-3 rounded-lg bg-green-900/50 border border-green-500 text-green-200';
+                let action = 'published';
+                let successMessage = 'Article published successfully!';
+
+                if (status === 'draft') {
+                    action = 'saved as draft';
+                    successMessage = 'Article saved as draft successfully!';
+                } else if (status === 'future') {
+                    action = 'scheduled';
+                    const scheduleDateTime = document.getElementById('scheduleInput').value;
+                    const formattedDate = new Date(scheduleDateTime).toLocaleString();
+                    successMessage = `Article scheduled for ${formattedDate}!`;
+                }
+
+                statusDiv.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span>Article ${action} successfully!</span>
+                            ${status === 'future' ? `<br><small class="text-green-300">Scheduled for: ${new Date(scheduledDate).toLocaleString()}</small>` : ''}
+                        </div>
+                        <a href="${result.link}" target="_blank" class="text-green-300 hover:text-green-100 underline ml-3">
+                            ${status === 'future' ? 'Preview' : 'View Post'}
+                        </a>
+                    </div>
+                `;
+
+                showNotification(successMessage, 'success');
+
+            } catch (error) {
+                console.error('WordPress API Error:', error);
+                statusDiv.className = 'p-3 rounded-lg bg-red-900/50 border border-red-500 text-red-200';
+                statusDiv.textContent = `Error: ${error.message}`;
+                let errorAction = 'publish';
+                if (status === 'draft') {
+                    errorAction = 'save draft';
+                } else if (status === 'future') {
+                    errorAction = 'schedule';
+                }
+                showNotification(`Failed to ${errorAction}: ${error.message}`, 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
+
+            switch (type) {
+                case 'success':
+                    notification.className += ' bg-green-900/90 border border-green-500 text-green-100';
+                    break;
+                case 'error':
+                    notification.className += ' bg-red-900/90 border border-red-500 text-red-100';
+                    break;
+                case 'warning':
+                    notification.className += ' bg-orange-900/90 border border-orange-500 text-orange-100';
+                    break;
+                default:
+                    notification.className += ' bg-blue-900/90 border border-blue-500 text-blue-100';
+            }
+
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-3 text-gray-300 hover:text-white">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        // ===== BULK GENERATION FUNCTIONS =====
+
+        function showBulkPage() {
+            document.querySelector('main').style.display = 'none';
+            document.querySelector('header').style.display = 'none';
+            document.getElementById('bulkPage').classList.remove('hidden');
+
+            // Load projects into bulk dropdown
+            loadBulkProjects();
+        }
+
+        function showMainPage() {
+            document.querySelector('main').style.display = 'block';
+            document.querySelector('header').style.display = 'block';
+            document.getElementById('bulkPage').classList.add('hidden');
+        }
+
+        function loadBulkProjects() {
+            const select = document.getElementById('bulkProjectSelect');
+            select.innerHTML = '<option value="">Select a WordPress project...</option>';
+
+            projects.forEach((project, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = project.name;
+                select.appendChild(option);
+            });
+        }
+
+        function handleCsvUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const csv = e.target.result;
+                    const lines = csv.split('\n').filter(line => line.trim());
+
+                    if (lines.length < 2) {
+                        showNotification('CSV file must have at least a header and one data row', 'error');
+                        return;
+                    }
+
+                    // Skip header row
+                    const dataLines = lines.slice(1);
+                    let addedCount = 0;
+
+                    dataLines.forEach(line => {
+                        const columns = parseCSVLine(line);
+                        if (columns.length >= 3) {
+                            const title = columns[0].trim();
+                            const scheduleTime = columns[1].trim();
+                            const action = columns[2].trim().toLowerCase();
+
+                            if (title && ['publish', 'draft', 'schedule'].includes(action)) {
+                                addToBulkQueue({
+                                    title: title,
+                                    scheduleTime: scheduleTime || null,
+                                    action: action,
+                                    status: 'pending'
+                                });
+                                addedCount++;
+                            }
+                        }
+                    });
+
+                    showNotification(`Successfully added ${addedCount} articles to queue`, 'success');
+                    event.target.value = ''; // Clear file input
+                } catch (error) {
+                    console.error('CSV parsing error:', error);
+                    showNotification('Error parsing CSV file. Please check the format.', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+
+            result.push(current);
+            return result.map(item => item.replace(/^"|"$/g, '')); // Remove surrounding quotes
+        }
+
+        function addManualEntry() {
+            const title = document.getElementById('manualTitle').value.trim();
+            const scheduleTime = document.getElementById('manualSchedule').value;
+            const action = document.getElementById('manualAction').value;
+
+            if (!title) {
+                showNotification('Please enter an article title', 'error');
+                return;
+            }
+
+            if (action === 'schedule' && !scheduleTime) {
+                showNotification('Please select a schedule time for scheduled posts', 'error');
+                return;
+            }
+
+            addToBulkQueue({
+                title: title,
+                scheduleTime: scheduleTime || null,
+                action: action,
+                status: 'pending'
+            });
+
+            // Clear form
+            document.getElementById('manualTitle').value = '';
+            document.getElementById('manualSchedule').value = '';
+            document.getElementById('manualAction').value = 'publish';
+
+            showNotification('Article added to queue', 'success');
+        }
+
+        function addToBulkQueue(article) {
+            article.id = Date.now() + Math.random();
+            bulkQueue.push(article);
+            updateBulkQueueDisplay();
+            updateBulkStats();
+        }
+
+        function updateBulkQueueDisplay() {
+            const queueContainer = document.getElementById('articleQueue');
+            const queueCount = document.getElementById('queueCount');
+
+            queueCount.textContent = bulkQueue.length;
+
+            if (bulkQueue.length === 0) {
+                queueContainer.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <svg class="w-12 h-12 mx-auto mb-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" clip-rule="evenodd"></path>
+                        </svg>
+                        <p>No articles in queue</p>
+                        <p class="text-sm">Upload a CSV file or add articles manually</p>
+                    </div>
+                `;
+                return;
+            }
+
+            queueContainer.innerHTML = bulkQueue.map(article => {
+                let statusColor = 'gray';
+                let statusIcon = '⏳';
+
+                switch (article.status) {
+                    case 'processing':
+                        statusColor = 'blue';
+                        statusIcon = '⚡';
+                        break;
+                    case 'completed':
+                        statusColor = 'green';
+                        statusIcon = '✅';
+                        break;
+                    case 'failed':
+                        statusColor = 'red';
+                        statusIcon = '❌';
+                        break;
+                }
+
+                return `
+                    <div class="flex items-center justify-between p-3 bg-dark-bg rounded-lg border border-dark-border">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="text-lg mr-2">${statusIcon}</span>
+                                <span class="font-medium text-gray-200">${article.title}</span>
+                            </div>
+                            <div class="flex items-center mt-1 text-xs text-gray-500">
+                                <span class="px-2 py-1 bg-${statusColor}-900/50 text-${statusColor}-400 rounded mr-2">${article.action}</span>
+                                ${article.scheduleTime ? `<span>📅 ${new Date(article.scheduleTime).toLocaleString()}</span>` : ''}
+                            </div>
+                        </div>
+                        <button onclick="removeBulkQueueItem('${article.id}')" class="text-red-400 hover:text-red-300 p-1">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function removeBulkQueueItem(articleId) {
+            bulkQueue = bulkQueue.filter(article => article.id != articleId);
+            updateBulkQueueDisplay();
+            updateBulkStats();
+        }
+
+        function updateBulkStats() {
+            const total = bulkQueue.length;
+            const completed = bulkQueue.filter(a => a.status === 'completed').length;
+            const failed = bulkQueue.filter(a => a.status === 'failed').length;
+
+            bulkStats = { total, completed, failed, current: bulkStats.current };
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('failedCount').textContent = failed;
+
+            const progress = total > 0 ? Math.round(((completed + failed) / total) * 100) : 0;
+            document.getElementById('progressPercent').textContent = progress + '%';
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        async function startBulkGeneration() {
+            const selectedProjectIndex = document.getElementById('bulkProjectSelect').value;
+            if (!selectedProjectIndex) {
+                showNotification('Please select a WordPress project', 'error');
+                return;
+            }
+
+            if (bulkQueue.length === 0) {
+                showNotification('Please add articles to the queue first', 'error');
+                return;
+            }
+
+            const pendingArticles = bulkQueue.filter(a => a.status === 'pending');
+            if (pendingArticles.length === 0) {
+                showNotification('No pending articles to process', 'warning');
+                return;
+            }
+
+            bulkProcessing = true;
+            bulkPaused = false;
+
+            // Update UI
+            document.getElementById('startBulkBtn').disabled = true;
+            document.getElementById('pauseBulkBtn').disabled = false;
+            document.getElementById('currentStatus').textContent = 'Starting bulk generation...';
+
+            for (const article of pendingArticles) {
+                if (!bulkProcessing || bulkPaused) break;
+
+                try {
+                    article.status = 'processing';
+                    bulkStats.current = article;
+                    updateBulkQueueDisplay();
+                    updateBulkStats();
+                    document.getElementById('currentStatus').textContent = `Generating: ${article.title}`;
+
+                    // Generate article with AI
+                    const generatedArticle = await generateBulkArticle(article.title);
+
+                    if (!bulkProcessing || bulkPaused) break;
+
+                    // Publish to WordPress
+                    const publishStatus = article.action === 'schedule' ? 'future' : article.action;
+                    await publishBulkArticle(generatedArticle, publishStatus, article.scheduleTime, selectedProjectIndex);
+
+                    article.status = 'completed';
+                    showNotification(`✅ Published: ${article.title}`, 'success');
+
+                } catch (error) {
+                    console.error(`Error processing ${article.title}:`, error);
+                    article.status = 'failed';
+                    showNotification(`❌ Failed: ${article.title} - ${error.message}`, 'error');
+                }
+
+                updateBulkQueueDisplay();
+                updateBulkStats();
+
+                // Small delay between articles to avoid overwhelming the API
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+
+            // Finished
+            bulkProcessing = false;
+            document.getElementById('startBulkBtn').disabled = false;
+            document.getElementById('pauseBulkBtn').disabled = true;
+            document.getElementById('currentStatus').textContent = 'Bulk generation completed!';
+
+            const completedCount = bulkQueue.filter(a => a.status === 'completed').length;
+            const failedCount = bulkQueue.filter(a => a.status === 'failed').length;
+            showNotification(`Bulk generation finished! ✅ ${completedCount} completed, ❌ ${failedCount} failed`, 'success');
+        }
+
+        function pauseBulkGeneration() {
+            bulkPaused = !bulkPaused;
+            const pauseBtn = document.getElementById('pauseBulkBtn');
+
+            if (bulkPaused) {
+                pauseBtn.innerHTML = `
+                    <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                    </svg>
+                    Resume
+                `;
+                document.getElementById('currentStatus').textContent = 'Bulk generation paused...';
+            } else {
+                pauseBtn.innerHTML = `
+                    <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                    </svg>
+                    Pause
+                `;
+                document.getElementById('currentStatus').textContent = 'Bulk generation resumed...';
+            }
+        }
+
+        function clearBulkQueue() {
+            if (bulkProcessing) {
+                showNotification('Cannot clear queue while processing. Please pause first.', 'warning');
+                return;
+            }
+
+            bulkQueue = [];
+            bulkStats = { total: 0, completed: 0, failed: 0, current: null };
+            updateBulkQueueDisplay();
+            updateBulkStats();
+            document.getElementById('currentStatus').textContent = 'Ready to start bulk generation...';
+            showNotification('Queue cleared', 'success');
+        }
+
+        async function generateBulkArticle(keyword) {
+            const prompt = `You are an expert SEO writer. Output ONLY a valid JSON object with no extra text, explanations, or comments. Write like a human. Keep it professional but conversational. Don't use em dashes or buzzwords. Avoid sounding like a press release. Be Clear Direct and natural, like you're writing to a smart friend.
+
+CRITICAL JSON FORMATTING RULES:
+- Return ONLY valid JSON - no markdown code blocks, no extra text before or after
+- ALL string values must be properly escaped for JSON
+- Use proper JSON formatting for the content field.
+- Use Proper escape characters for the content field so that no Error is thrown.
+ 
+
+CONTENT GUIDELINES [Please follow these guidelines strictly Buddy :)]:
+- The Year is 2025. Use the latest data and information. 
+- Data should be 100% accurate, correct and should be in the same language as the keyword, verified from trusted sources only. No Rumoured or Unverified data.
+- Write a comprehensive article with AT LEAST 1500-2000 words total
+- Title should be greater than 80 characters.
+- If the keyword is a listicle without number of points, then write a listicle article with AT LEAST 10 points. Each point having a subheading and a paragraph atleast 100 words cumpulsory.
+- Use an engaging and easy-to-read style, similar to English News Websites like NDTV or India Today. 
+- Do not use overly professional or academic language. 
+- The Content should follow E.E.A.T. principles.
+- Dont follow YMYL (Your Money Your Life) guidelines.
+- Make sure the tone is accessible to general readers while keeping it informative. 
+- Maintain such a flow so it does feel boring or generic informational pass -on
+- Title must be clickbait to catch Attention of readers.
+- Do not use any emojis in the content unless it is a part of the keyword or neccessary.
+- Do not use any images in the content.
+- Do not use any videos in the content.
+- Do not use any audio in the content.
+- Do not use any links in the content unless necessary.
+
+Return exactly this structure:
+
+{
+  "title": "Your SEO-optimized title here",
+  "fKeyword": "Your Focus keyword article here",
+  "meta_description": "Your meta description here",
+  "content": "Your HTML content here"
+}
+
+Strict rules:
+- Each paragraph should be 100-150 words maximum (not the entire article)
+- Never use H1 in content field
+- Never start content field with a heading
+- Add a compelling hook paragraph in the start of the content field
+- Create at least 5-7 main sections with <h2> headings
+- Diversely use different components like headings, paragraphs, lists, tables, blockquotes, etc
+- The content field must be valid HTML, using only tags like <p>, <h2>, <h3>, <ul>, <ol>, <li>, <b>, <i>, <strong>, <em>, <table>, <tr>, <td>, <th>, <blockquote>, etc. for formatting
+- Do NOT include <html>, <head>, <body>, or any other outer HTML structure—only the inner content HTML
+- Do not include any links in the content
+- Write the article in the language of the keyword
+- Write human-like, engaging, and informative content
+- Include specific details, features, comparisons, and examples
+- Add a comprehensive Conclusion section at the end with <h2>Conclusion</h2> followed by a concluding paragraph
+- Return ONLY valid JSON, no markdown code blocks, no extra text
+
+Write a high-quality, SEO-optimized article about: ${keyword}`;
+
+            const response = await puter.ai.chat(prompt, { model: "gpt-4o" }, { stream: true });
+
+            let content = '';
+            if (response && response.message && response.message.content) {
+                content = response.message.content;
+            } else if (response && typeof response === 'string') {
+                content = response;
+            } else if (response && response.text) {
+                content = response.text;
+            } else if (response && response.content) {
+                content = response.content;
+            } else if (response && response.message) {
+                content = response.message;
+            } else {
+                throw new Error('Could not find content in response');
+            }
+
+            let parsedResponse;
+            try {
+                parsedResponse = JSON.parse(content);
+            } catch (e) {
+                // Try to extract JSON from response
+                const jsonMatch = content.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    parsedResponse = JSON.parse(jsonMatch[0]);
+                } else {
+                    throw new Error('Invalid JSON response from AI');
+                }
+            }
+
+            // Validate required fields
+            if (!parsedResponse.title || !parsedResponse.content || !parsedResponse.meta_description) {
+                throw new Error('AI response missing required fields');
+            }
+
+            return parsedResponse;
+        }
+
+        async function publishBulkArticle(article, status, scheduleTime, projectIndex) {
+            const project = projects[projectIndex];
+
+            const postData = {
+                title: article.title,
+                content: article.content,
+                excerpt: article.meta_description,
+                status: status,
+                meta: {}
+            };
+
+            // Add scheduled date if status is 'future'
+            if (status === 'future' && scheduleTime) {
+                postData.date = new Date(scheduleTime).toISOString();
+            }
+
+            const auth = btoa(`${project.username}:${project.password}`);
+
+            const response = await fetch(`${project.url}/wp-json/wp/v2/posts`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Basic ${auth}`
+                },
+                body: JSON.stringify(postData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP ${response.status}`);
+            }
+
+            return await response.json();
+        }
+    </script>
+</body>
+
+</html>
